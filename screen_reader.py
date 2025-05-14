@@ -13,9 +13,9 @@ class ScreenReader:
             time.sleep(3)
             # The screen part to capture
             # This is for screenshots
-            monitor = {"top": 50, "left": 530, "width": 450, "height": 100}
+            # monitor = {"top": 50, "left": 530, "width": 450, "height": 100}
             # This is for the actual game
-            # monitor = {"top": 50, "left": 475, "width": 535, "height": 60}
+            monitor = {"top": 50, "left": 475, "width": 535, "height": 60}
             output = "sct-{top}x{left}_{width}x{height}.png".format(**monitor)
 
             # Grab the data
@@ -77,21 +77,15 @@ class AlwaysOnTopWindow:
     def run(self):
         self.root.mainloop()
 
-    def change_text(self, new_text):
-        self.label.config(text=new_text)
+    def change_text(self, display_text: str, tittle: str):
+        self.label.config(text=display_text)
+        self.root.title(tittle)
 
-    def run_all(self):
+    def run_all(self) -> None:
         screen_reader = ScreenReader()
         screenshot = screen_reader.get_screenshot()
         pokemon_name = screen_reader.find_pokemon_name(screenshot=screenshot)
         types = find_types(pokemon_name)
-        weakness = ""
-        weakness_ls = []
-        resistanse_ls = []
-        for type in types:
-            weak, weak_ls, res = find_weakness(type)
-            weakness = weakness + weak 
-            weakness_ls.append(weak_ls)
-            resistanse_ls.append(res)
-        self.change_text(str(weakness) + " res " + str(resistanse_ls))
-        
+
+        weaknesses = find_weakness(types)
+        self.change_text(str(weaknesses), pokemon_name)

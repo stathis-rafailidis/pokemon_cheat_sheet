@@ -21,20 +21,26 @@ def find_types(pokemon_name: str) -> list:
 
 
 def find_weakness(types: list) -> list[str]:
+    resistanses: list = []
+    weaknesses: list = []
+    no_dmg: list = []
+    for type in types:
 
-    request = f"https://pokeapi.co/api/v2/type/{types}/"
-    response = requests.get(request)
-    if response.status_code == 200:
-        data = response.json()
-        dmg_relation = data['damage_relations']
-        weak = ''
-        weakness_ls = []
-        for weakness in dmg_relation['double_damage_from']:
-            weak = weak + " " + (weakness['name'])
-            weakness_ls.append(weakness)
+        request = f"https://pokeapi.co/api/v2/type/{type}/"
+        response = requests.get(request)
+        if response.status_code == 200:
+            data = response.json()
+            dmg_relation = data['damage_relations']
+            
+            for weakness in dmg_relation['double_damage_from']:
+                weaknesses.append(weakness['name'])
 
-        resistanse_ls = []
-        for resistanse in dmg_relation['half_damage_from']:
-            resistanse_ls.append(resistanse['name'])
-        
-    return weak, weakness, resistanse_ls
+            for resistanse in dmg_relation['half_damage_from']:
+                resistanses.append(resistanse['name'])
+            
+            for no_damage in dmg_relation['no_damage_from']:
+                no_dmg.append(no_damage['name'])
+
+    weaknesses = list(set(weaknesses) - set(resistanses) - set(no_dmg))
+
+    return weaknesses
